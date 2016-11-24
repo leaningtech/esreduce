@@ -2,7 +2,7 @@
   "name": "esreduce",
   "version": "0.0.1",
   "description": "Mimimize EcmaScript tests by manipulating the AST and checking the result",
-  "main": "index.js",
+  "main": "esreduce.js",
   "scripts": {
     "test": "gulp default",
     "unit-test": "gulp test",
