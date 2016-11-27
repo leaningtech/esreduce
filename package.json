@@ -20,6 +20,7 @@
   "homepage": "https://github.com/smvv/esreduce#readme",
   "dependencies": {
     "acorn": "^4.0.3",
+    "debug": "^2.3.3",
     "escodegen": "^1.8.1",
     "estraverse": "^4.2.0"
   },

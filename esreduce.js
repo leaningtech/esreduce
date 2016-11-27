@@ -9,45 +9,167 @@
 
     var estraverse = require('estraverse');
     var Syntax = estraverse.Syntax;
-    var VisitorKeys = estraverse.VisitorKeys;
 
-    Syntax;
-    VisitorKeys;
+    var iterate = require('./traversal.js').iterate;
+
+    function createEmptyBlockStatement() {
+        return {
+            type: "BlockStatement",
+            body: [],
+        };
+    }
 
     var mutator = {
-        Program: function*(node) {
-        },
-
-        IfStatement: function*(node) {
-            yield node.consequent;
-        },
-
-        VariableDeclarator: function*(node) {
-        },
-
-        VariableDeclaration: function*(node) {
+        Identifier: function*(node) {
         },
 
         Literal: function*(node) {
         },
 
-        Identifier: function*(node) {
+        RegExpLiteral: function*(node) {
+        },
 
+        Program: function*(node) {
+        },
+
+        ExpressionStatement: function*(node) {
+        },
+
+        BlockStatement: function*(node) {
+            yield createEmptyBlockStatement();
+        },
+
+        EmptyStatement: function*(node) {
+            yield null;
+        },
+
+        DebuggerStatement: function*(node) {
+        },
+
+        WithStatement: function*(node) {
+        },
+
+        // Control flow
+
+        ReturnStatement: function*(node) {
+        },
+
+        LabeledStatement: function*(node) {
+        },
+
+        BreakStatement: function*(node) {
+        },
+
+        ContinueStatement: function*(node) {
+        },
+
+        // Choice
+
+        IfStatement: function*(node) {
+            yield node.consequent;
+            yield null;
+        },
+
+        SwitchStatement: function*(node) {
+            yield null;
+        },
+
+        SwitchCase: function*(node) {
+            yield null;
+        },
+
+        // Exceptions
+
+        ThrowStatement: function*(node) {
+        },
+
+        TryStatement: function*(node) {
+        },
+
+        CatchClause: function*(node) {
+        },
+
+        // Loops
+
+        WhileStatement: function*(node) {
+            yield null;
+        },
+
+        DoWhileStatement: function*(node) {
+            yield null;
+        },
+
+        ForStatement: function*(node) {
+            yield null;
+        },
+
+        ForInStatement: function*(node) {
+            yield null;
+        },
+
+        // Declarations
+
+        FunctionDeclaration: function*(node) {
+            yield null;
+        },
+
+        VariableDeclaration: function*(node) {
+        },
+
+        VariableDeclarator: function*(node) {
+        },
+
+        // Expressions
+
+        ThisExpression: function*(node) {
+        },
+
+        ArrayExpression: function*(node) {
+        },
+
+        ObjectExpression: function*(node) {
+        },
+
+        Property: function*(node) {
+        },
+
+        FunctionExpression: function*(node) {
+        },
+
+        // Unary operations
+
+        UnaryExpression: function*(node) {
+        },
+
+        UpdateExpression: function*(node) {
+        },
+
+        // Binary operations
+
+        BinaryExpression: function*(node) {
+        },
+
+        AssignmentExpression: function*(node) {
+        },
+
+        LogicalExpression: function*(node) {
+        },
+
+        MemberExpression: function*(node) {
+        },
+
+        ConditionalExpression: function*(node) {
+        },
+
+        CallExpression: function*(node) {
+        },
+
+        NewExpression: function*(node) {
+        },
+
+        SequenceExpression: function*(node) {
         },
     };
-
-    function* iterate(node) {
-        for (var key of VisitorKeys[node.type]) {
-            if (!node[key])
-                continue;
-
-            var nodes = Array.isArray(node[key]) ? node[key] : [node[key]];
-            for (var i in nodes) {
-                yield {parent: node, key: key, i: i, node: nodes[i]};
-                yield* iterate(nodes[i]);
-            }
-        }
-    }
 
     function replace(value, mutation) {
         var parent = value.parent;
@@ -74,7 +196,7 @@
             var mutation = m.value;
             var replacement = replace(value, mutation);
 
-            var tmp = escodegen.generate(ast);
+            var tmp = generate(ast);
 
             if (!interesting(tmp, ast))
                 replace(value, replacement);
@@ -85,27 +207,40 @@
         return result;
     }
 
+    var CodegenOptions = {
+        format: {
+            semicolons: false,
+        },
+    };
+
+    function generate(ast) {
+        return escodegen.generate(ast, CodegenOptions);
+    }
+
     function run(source, interesting) {
+        // Verify that the original source code is interesting.
         if (!interesting(source, ast))
             return;
 
-        var result = null;
+        // Convert original JS source code to an AST.
         var ast = acorn.parse(source);
-
         assert.equal(ast.type, Syntax.Program);
-        var iter = iterate(ast);
 
+        // Generate JS code for the original AST. The result is overwritten
+        // when an interesting mutation occured.
+        var result = generate(ast);
+
+        // Traverse the AST and try each mutation.
+        var iter = iterate(ast);
         for (var cur = iter.next(); !cur.done; cur = iter.next()) {
             var tmp = mutate(ast, interesting, cur.value);
             if (tmp)
                 result = tmp;
         }
 
-        if (!result)
-            result = escodegen.generate(ast);
-
         return result;
     }
 
     exports.run = run;
+    exports.iterate = iterate;
 }());
