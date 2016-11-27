@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var eslint = require('gulp-eslint');
+var runSequence = require('run-sequence');
 
 var TEST = [ 'test/*.js' ];
 
@@ -34,8 +35,11 @@ var ESLINT_OPTION = {
         ]
     },
     'env': {
-        'node': true
-    }
+        'node': true,
+    },
+    'parserOptions': {
+        'ecmaVersion': 6,
+    },
 };
 
 gulp.task('test', function () {
@@ -53,4 +57,6 @@ gulp.task('lint', function () {
         .pipe(eslint.failOnError());
 });
 
-gulp.task('default', [ 'lint', 'test' ]);
+gulp.task('default', function (cb) {
+    runSequence('test', 'lint', cb);
+});
