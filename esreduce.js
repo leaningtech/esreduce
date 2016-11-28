@@ -257,7 +257,7 @@
         var ast = acorn.parse(source);
         assert.equal(ast.type, Syntax.Program);
 
-        var iterationLimit = 3;
+        var iterationLimit = 10;
         var iteration = 0;
 
         do {
@@ -273,21 +273,21 @@
             // BlockStatement's children into the parent node.
             changed |= simplify(ast);
 
-            if (logVerbose.enabled) {
-                logVerbose('=== reduced the AST to: ===');
-                var iter = iterate(ast);
-                for (var cur = iter.next(); !cur.done; cur = iter.next());
-            }
+            if (changed) {
+                if (logVerbose.enabled) {
+                    logVerbose('=== reduced the AST to: ===');
+                    var iter = iterate(ast);
+                    for (var cur = iter.next(); !cur.done; cur = iter.next());
+                }
 
-            if (++iteration > iterationLimit) {
-                var msg = 'iteration limit (' + iterationLimit + ') is reached';
-                throw new Error(msg);
-            } else if (log.enabled && changed) {
-                log('=== start another iteration ===');
+                if (++iteration > iterationLimit) {
+                    var msg = 'iteration limit (' + iterationLimit + ') is reached';
+                    throw new Error(msg);
+                } else if (log.enabled) {
+                    log('=== start another iteration ===');
+                }
             }
         } while (changed);
-
-        // TODO iterate when changed is true.
 
         // Generate the final JS code for the AST.
         var result = generate(ast);
