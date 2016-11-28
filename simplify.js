@@ -50,7 +50,9 @@
 
         estraverse.traverse(ast, {
             enter: function (node) {
-                if (node.type == Syntax.Program) {
+                if (node.type == Syntax.Program ||
+                    node.type == Syntax.BlockStatement)
+                {
                     removeNullNodes(node, node.body);
                     mergeBlockStatementChildrenIntoParent(node, node.body);
                 }
