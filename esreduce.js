@@ -220,6 +220,9 @@
 
     var CodegenOptions = {
         format: {
+            indent: {
+                style: '\t',
+            },
             semicolons: false,
         },
     };
