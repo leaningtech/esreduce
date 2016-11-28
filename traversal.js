@@ -24,11 +24,14 @@
             var node = current.node;
             var depth = current.depth;
 
-            var indent = '';
-            for (var d = 0; d < depth; d++)
-                indent += '--';
+            if (log.enabled) {
+                var indent = '';
+                for (var d = 0; d < depth; d++)
+                    indent += '--';
 
-            log(indent + node.type);
+                log(indent + node.type);
+            }
+
             yield current;
 
             // Check if the node is not removed before traversing its children.
