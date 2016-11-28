@@ -11,6 +11,10 @@
     var Syntax = estraverse.Syntax;
 
     var log = require('debug')('esreduce')
+    var logVerbose = require('debug')('verbose')
+
+    // TODO move mutate to another file
+    var logMutate = require('debug')('mutate')
 
     var iterate = require('./traversal.js').iterate;
     var simplify = require('./simplify.js').simplify;
@@ -199,10 +203,10 @@
             parent[key] = mutation;
         }
 
-        if (log.enabled) {
+        if (logMutate.enabled) {
             var r = replaced === null ? null : replaced.type;
             var m = mutation === null ? null : mutation.type;
-            log('replaced:', r, 'with:', m);
+            logMutate('replaced:', r, 'with:', m);
         }
 
         return replaced;
@@ -269,8 +273,8 @@
             // BlockStatement's children into the parent node.
             changed |= simplify(ast);
 
-            if (log.enabled) {
-                log('=== reduced the AST to: ===');
+            if (logVerbose.enabled) {
+                logVerbose('=== reduced the AST to: ===');
                 var iter = iterate(ast);
                 for (var cur = iter.next(); !cur.done; cur = iter.next());
             }
