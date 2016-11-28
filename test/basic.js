@@ -62,4 +62,14 @@ describe('basic', function () {
         });
         expect(actual).to.be.equal(expected);
     });
+
+    it('can remove if statement and keep the alternate', () => {
+        var source = 'if (0) var a = 1; else var a = 2; a'
+        var expected = 'var a = 2;\na';
+        var actual = esreduce.run(source, (source, ast) => {
+            try { return eval(source) == 2; }
+            catch(e) { return false; }
+        });
+        expect(actual).to.be.equal(expected);
+    });
 });

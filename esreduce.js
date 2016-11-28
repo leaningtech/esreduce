@@ -88,7 +88,12 @@
         // Choice
 
         IfStatement: function*(node) {
-            yield node.consequent;
+            if (node.consequent) {
+                yield node.consequent;
+            }
+            if (node.alternate) {
+                yield node.alternate;
+            }
             yield null;
         },
 
