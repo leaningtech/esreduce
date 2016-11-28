@@ -25,8 +25,7 @@ if (process.argv.length != 4)
 const configfile = process.argv[2];
 const sourcefile = process.argv[3];
 
-let interesting = (code, ast) => {
-    return true;
-};
+let config = require(configfile);
+let interesting = config.interesting;
 
 run(readFile(sourcefile, 'utf8'), interesting);
