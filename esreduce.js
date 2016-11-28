@@ -10,6 +10,8 @@
     var estraverse = require('estraverse');
     var Syntax = estraverse.Syntax;
 
+    var log = require('debug')('esreduce')
+
     var iterate = require('./traversal.js').iterate;
     var simplify = require('./simplify.js').simplify;
 
@@ -38,7 +40,9 @@
         },
 
         BlockStatement: function*(node) {
-            yield createEmptyBlockStatement();
+            if (node.body.length) {
+                yield createEmptyBlockStatement();
+            }
         },
 
         EmptyStatement: function*(node) {
@@ -195,6 +199,12 @@
             parent[key] = mutation;
         }
 
+        if (log.enabled) {
+            var r = replaced === null ? null : replaced.type;
+            var m = mutation === null ? null : mutation.type;
+            log('replaced:', r, 'with:', m);
+        }
+
         return replaced;
     }
 
@@ -212,8 +222,10 @@
 
             if (tmp === null || !interesting(tmp, ast))
                 replace(value, replacement);
-            else
+            else {
+                log('mutation was successful!');
                 changed = true;
+            }
         }
 
         return changed;
@@ -241,17 +253,35 @@
         var ast = acorn.parse(source);
         assert.equal(ast.type, Syntax.Program);
 
-        var changed = false;
+        var iterationLimit = 3;
+        var iteration = 0;
 
-        // Traverse the AST and try each mutation.
-        var iter = iterate(ast);
-        for (var cur = iter.next(); !cur.done; cur = iter.next()) {
-            changed |= mutate(ast, interesting, cur.value);
-        }
+        do {
+            var changed = false;
 
-        // Simplify the AST by removing 'null' statements and by merging
-        // BlockStatement's children into the parent node.
-        changed |= simplify(ast);
+            // Traverse the AST and try each mutation.
+            var iter = iterate(ast);
+            for (var cur = iter.next(); !cur.done; cur = iter.next()) {
+                changed |= mutate(ast, interesting, cur.value);
+            }
+
+            // Simplify the AST by removing 'null' statements and by merging
+            // BlockStatement's children into the parent node.
+            changed |= simplify(ast);
+
+            if (log.enabled) {
+                log('=== reduced the AST to: ===');
+                var iter = iterate(ast);
+                for (var cur = iter.next(); !cur.done; cur = iter.next());
+            }
+
+            if (++iteration > iterationLimit) {
+                var msg = 'iteration limit (' + iterationLimit + ') is reached';
+                throw new Error(msg);
+            } else if (log.enabled && changed) {
+                log('=== start another iteration ===');
+            }
+        } while (changed);
 
         // TODO iterate when changed is true.
 

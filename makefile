@@ -1,6 +1,6 @@
 # Remove the following comment to enable log messages for AST traversal, or AST
 # simplification.
-export DEBUG=traversal,simplify
+#export DEBUG=traversal,simplify,esreduce
 
 .PHONY: build test test-basic test-traversal test-simplify
 
