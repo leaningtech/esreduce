@@ -1,7 +1,16 @@
-# set following environment variable to enable log messages for AST traversal.
+# Remove the following comment to enable log messages for AST traversal.
 #export DEBUG=traversal
 
-.PHONY: test
+.PHONY: build test test-basic test-traversal
+
+build:
+	npm run build
 
 test:
-	node_modules/.bin/mocha test/
+	npm test
+
+test-basic:
+	node_modules/.bin/mocha test/basic.js
+
+test-traversal:
+	node_modules/.bin/mocha test/traversal.js

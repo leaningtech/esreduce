@@ -6,7 +6,12 @@
   "scripts": {
     "test": "gulp default",
     "unit-test": "gulp test",
-    "lint": "gulp lint"
+    "lint": "gulp lint",
+    "build": "npm run build:bin",
+    "build:bin": "rollup -c rollup/config.bin.js"
+  },
+  "bin": {
+    "esreduce": "./bin/esreduce"
   },
   "repository": {
     "type": "git",
@@ -21,7 +26,7 @@
   "dependencies": {
     "acorn": "^4.0.3",
     "debug": "^2.3.3",
-    "escodegen": "^1.8.1",
+    "escodegen": "https://github.com/smvv/escodegen#7afe3566",
     "estraverse": "^4.2.0"
   },
   "devDependencies": {
@@ -29,6 +34,8 @@
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
     "gulp-mocha": "^3.0.1",
+    "rollup": "^0.36.4",
+    "rollup-plugin-buble": "^0.14.0",
     "run-sequence": "^1.2.2"
   }
 }
