@@ -15,18 +15,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smvv/esreduce.git"
+    "url": "git+https://github.com/leaningtech/esreduce.git"
   },
-  "author": "Sander Mathijs van Veen",
+  "author": "Sander Mathijs van Veen (LeaningTech)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/smvv/esreduce/issues"
+    "url": "https://github.com/leaningtech/esreduce/issues"
   },
-  "homepage": "https://github.com/smvv/esreduce#readme",
+  "homepage": "https://github.com/leaningtech/esreduce#readme",
   "dependencies": {
     "acorn": "^4.0.3",
     "debug": "^2.3.3",
-    "escodegen": "https://github.com/smvv/escodegen#7afe3566",
+    "escodegen": "https://github.com/smvv/escodegen#cc53876",
     "estraverse": "^4.2.0"
   },
   "devDependencies": {
