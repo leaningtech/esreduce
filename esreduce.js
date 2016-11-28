@@ -11,6 +11,7 @@
     var Syntax = estraverse.Syntax;
 
     var iterate = require('./traversal.js').iterate;
+    var simplify = require('./simplify.js').simplify;
 
     function createEmptyBlockStatement() {
         return {
@@ -201,7 +202,7 @@
         assert(value.node.type in mutator,
                'Unimplemented type: ' + value.node.type);
         var iter = mutator[value.node.type](value.node);
-        var result = undefined;
+        var changed = false;
 
         for (var m = iter.next(); !m.done; m = iter.next()) {
             var mutation = m.value;
@@ -212,10 +213,10 @@
             if (tmp === null || !interesting(tmp, ast))
                 replace(value, replacement);
             else
-                result = tmp;
+                changed = true;
         }
 
-        return result;
+        return changed;
     }
 
     var CodegenOptions = {
@@ -240,21 +241,27 @@
         var ast = acorn.parse(source);
         assert.equal(ast.type, Syntax.Program);
 
-        // Generate JS code for the original AST. The result is overwritten
-        // when an interesting mutation occured.
-        var result = generate(ast);
+        var changed = false;
 
         // Traverse the AST and try each mutation.
         var iter = iterate(ast);
         for (var cur = iter.next(); !cur.done; cur = iter.next()) {
-            var tmp = mutate(ast, interesting, cur.value);
-            if (tmp !== undefined)
-                result = tmp;
+            changed |= mutate(ast, interesting, cur.value);
         }
+
+        // Simplify the AST by removing 'null' statements and by merging
+        // BlockStatement's children into the parent node.
+        changed |= simplify(ast);
+
+        // TODO iterate when changed is true.
+
+        // Generate the final JS code for the AST.
+        var result = generate(ast);
 
         return result;
     }
 
     exports.run = run;
     exports.iterate = iterate;
+    exports.simplify = simplify;
 }());

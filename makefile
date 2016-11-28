@@ -1,7 +1,8 @@
-# Remove the following comment to enable log messages for AST traversal.
-#export DEBUG=traversal
+# Remove the following comment to enable log messages for AST traversal, or AST
+# simplification.
+export DEBUG=traversal,simplify
 
-.PHONY: build test test-basic test-traversal
+.PHONY: build test test-basic test-traversal test-simplify
 
 build:
 	npm run build
@@ -14,3 +15,6 @@ test-basic:
 
 test-traversal:
 	node_modules/.bin/mocha test/traversal.js
+
+test-simplify:
+	node_modules/.bin/mocha test/simplify.js
