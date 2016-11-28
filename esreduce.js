@@ -184,11 +184,13 @@
         var parent = value.parent;
         var key = value.key;
         var i = value.i;
-        var replaced = value.node;
+        var replaced;
 
         if (Array.isArray(parent[key])) {
+            replaced = parent[key][i];
             parent[key][i] = mutation;
         } else {
+            replaced = parent[key];
             parent[key] = mutation;
         }
 
@@ -199,7 +201,7 @@
         assert(value.node.type in mutator,
                'Unimplemented type: ' + value.node.type);
         var iter = mutator[value.node.type](value.node);
-        var result = null;
+        var result = undefined;
 
         for (var m = iter.next(); !m.done; m = iter.next()) {
             var mutation = m.value;
@@ -207,7 +209,7 @@
 
             var tmp = generate(ast);
 
-            if (!interesting(tmp, ast))
+            if (tmp === null || !interesting(tmp, ast))
                 replace(value, replacement);
             else
                 result = tmp;
@@ -243,7 +245,7 @@
         var iter = iterate(ast);
         for (var cur = iter.next(); !cur.done; cur = iter.next()) {
             var tmp = mutate(ast, interesting, cur.value);
-            if (tmp)
+            if (tmp !== undefined)
                 result = tmp;
         }
 
