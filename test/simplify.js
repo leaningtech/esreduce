@@ -15,7 +15,7 @@ describe('simplify', function () {
         expect(actual).to.be.equal(expected);
     });
 
-    it('can create an empty function', () => {
+    it('can create an empty function with a return value', () => {
         var source = 'function foo(a,b,c,d){' +
                      ';for(var i=b;i<c;i++){;a[i]=d};return a;};';
         var expected = 'function foo(a, b, c, d) {\n\treturn a\n}';
@@ -23,6 +23,20 @@ describe('simplify', function () {
             try {
                 return eval(code + ';foo([],0,0,0)').length == 0 &&
                     code.indexOf('function foo') > -1;
+            }
+            catch(e) { return false; }
+        });
+        expect(actual).to.be.equal(expected);
+    });
+
+    it('can create an empty function without a return value', () => {
+        var source = 'function foo(a,b,c,d){' +
+                     ';for(var i=b;i<c;i++){;a[i]=d};return a;};';
+        var expected = 'function foo(a, b, c, d) {\n}';
+        var actual = esreduce.run(source, (code, ast) => {
+            try {
+                eval(code + ';foo([],0,0,0)');
+                return code.indexOf('function foo') > -1;
             }
             catch(e) { return false; }
         });
