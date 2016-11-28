@@ -114,18 +114,22 @@
         // Loops
 
         WhileStatement: function*(node) {
+            yield node.body;
             yield null;
         },
 
         DoWhileStatement: function*(node) {
+            yield node.body;
             yield null;
         },
 
         ForStatement: function*(node) {
+            yield node.body;
             yield null;
         },
 
         ForInStatement: function*(node) {
+            yield node.body;
             yield null;
         },
 
