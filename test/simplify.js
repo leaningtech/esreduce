@@ -42,4 +42,14 @@ describe('simplify', function () {
         });
         expect(actual).to.be.equal(expected);
     });
+
+    it('can remove properties and the object completely', () => {
+        var source = 'var a = [{b:1, c:2}]; a'
+        var expected = 'var a = [];\na';
+        var actual = esreduce.run(source, (code, ast) => {
+            try { return eval(code).length !== undefined; }
+            catch(e) { return false; }
+        });
+        expect(actual).to.be.equal(expected);
+    });
 });

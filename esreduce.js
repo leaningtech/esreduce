@@ -26,6 +26,13 @@
         };
     }
 
+    function createEmptyArrayExpression() {
+        return {
+            type: "ArrayExpression",
+            elements: [],
+        };
+    }
+
     var mutator = {
         Identifier: function*(node) {
         },
@@ -141,9 +148,13 @@
         },
 
         ArrayExpression: function*(node) {
+            if (node.elements && node.elements.length) {
+                yield createEmptyArrayExpression();
+            }
         },
 
         ObjectExpression: function*(node) {
+            yield null;
         },
 
         Property: function*(node) {
