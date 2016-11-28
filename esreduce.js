@@ -33,6 +33,7 @@
         },
 
         ExpressionStatement: function*(node) {
+            yield null;
         },
 
         BlockStatement: function*(node) {
@@ -47,20 +48,25 @@
         },
 
         WithStatement: function*(node) {
+            yield null;
         },
 
         // Control flow
 
         ReturnStatement: function*(node) {
+            yield null;
         },
 
         LabeledStatement: function*(node) {
+            yield null;
         },
 
         BreakStatement: function*(node) {
+            yield null;
         },
 
         ContinueStatement: function*(node) {
+            yield null;
         },
 
         // Choice
@@ -114,6 +120,7 @@
         },
 
         VariableDeclaration: function*(node) {
+            yield null;
         },
 
         VariableDeclarator: function*(node) {
@@ -131,6 +138,7 @@
         },
 
         Property: function*(node) {
+            yield null;
         },
 
         FunctionExpression: function*(node) {
@@ -162,6 +170,7 @@
         },
 
         CallExpression: function*(node) {
+            yield null;
         },
 
         NewExpression: function*(node) {
