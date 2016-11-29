@@ -11,7 +11,7 @@
     var Syntax = estraverse.Syntax;
 
     var log = require('debug')('esreduce')
-    var logVerbose = require('debug')('verbose')
+    var logAst = require('debug')('ast')
 
     // TODO move mutate to another file
     var logMutate = require('debug')('mutate')
@@ -315,8 +315,8 @@
             changed |= simplify(ast);
 
             if (changed) {
-                if (logVerbose.enabled) {
-                    logVerbose('=== reduced the AST to: ===');
+                if (logAst.enabled) {
+                    logAst('=== reduced AST to: ===');
                     var iter = iterate(ast);
                     for (var cur = iter.next(); !cur.done; cur = iter.next());
                 }
