@@ -43,6 +43,16 @@ describe('simplify', function () {
         expect(actual).to.be.equal(expected);
     });
 
+    it('can remove not called functions', () => {
+        var source = 'var x; function a(){x=1};function c(){};a();x';
+        var expected = 'var x;\nfunction a() {\n\tx = 1\n}\na();\nx';
+        var actual = esreduce.run(source, (code, ast) => {
+            try { return eval(code) == 1; }
+            catch(e) { return false; }
+        });
+        expect(actual).to.be.equal(expected);
+    });
+
     it('can remove properties and the object completely', () => {
         var source = 'var a = [{b:1, c:2}]; a'
         var expected = 'var a = [];\na';
