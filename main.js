@@ -1,5 +1,5 @@
 import {basename} from "path"
-import {readFileSync as readFile} from 'fs'
+import {readFileSync as readFile, writeFileSync} from 'fs'
 import * as esreduce from 'esreduce'
 
 function run(source, interesting) {
@@ -10,7 +10,14 @@ function run(source, interesting) {
         process.exit(1);
     }
 
-    process.stdout.write(result + '\n');
+    var stats = esreduce.lastStats;
+    console.log('ESReduce statistics:');
+    console.log(`\t- iterations: ${stats.iterations}`);
+    console.log(`\t- interesting tests: ${stats.interestingTests}`);
+
+    var outfile = '/tmp/esreduce.js';
+    console.log('ESReduce final JS code written to:', outfile);
+    writeFileSync(outfile, result + '\n');
 }
 
 function help(status) {

@@ -16,6 +16,18 @@
     // TODO move mutate to another file
     var logMutate = require('debug')('mutate')
 
+    class ReduceStats {
+        ReduceStats() {
+            reset();
+        }
+        reset() {
+            this.iterations = 0;
+            this.interestingTests = 0;
+        }
+    }
+
+    var lastStats = new ReduceStats();
+
     var iterate = require('./traversal.js').iterate;
     var simplify = require('./simplify.js').simplify;
 
@@ -244,6 +256,7 @@
 
             var tmp = generate(ast);
 
+            lastStats.interestingTests++;
             if (tmp === null || !interesting(tmp, ast))
                 replace(value, replacement);
             else {
@@ -269,7 +282,10 @@
     }
 
     function run(source, interesting) {
+        lastStats.reset();
+
         // Verify that the original source code is interesting.
+        lastStats.interestingTests++;
         if (!interesting(source, ast))
             return;
 
@@ -281,6 +297,7 @@
         var iteration = 0;
 
         do {
+            lastStats.iterations++;
             var changed = false;
 
             // Traverse the AST and try each mutation.
@@ -315,6 +332,7 @@
         return result;
     }
 
+    exports.lastStats = lastStats;
     exports.run = run;
     exports.iterate = iterate;
     exports.simplify = simplify;
