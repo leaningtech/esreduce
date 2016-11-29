@@ -68,5 +68,28 @@
             }
         }
     }
+
+    function simpleWalk(node, callback, depth) {
+        if (node === null)
+            return;
+
+        if (depth === undefined)
+            depth = 0;
+
+        callback(node, depth);
+
+        for (var key of VisitorKeys[node.type]) {
+            var value = node[key];
+            var children = Array.isArray(value) ? value : [value];
+            for (var i = 0; i < children.length; i++) {
+                if (!children[i])
+                    continue;
+
+                simpleWalk(children[i], callback, depth + 1);
+            }
+        }
+    }
+
     exports.iterate = iterate;
+    exports.simpleWalk = simpleWalk;
 }());

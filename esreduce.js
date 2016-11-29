@@ -28,7 +28,10 @@
 
     var lastStats = new ReduceStats();
 
-    var iterate = require('./traversal.js').iterate;
+    var traversal = require('./traversal.js');
+    var iterate = traversal.iterate;
+    var simpleWalk = traversal.simpleWalk;
+
     var simplify = require('./simplify.js').simplify;
 
     function createEmptyBlockStatement() {
@@ -317,8 +320,14 @@
             if (changed) {
                 if (logAst.enabled) {
                     logAst('=== reduced AST to: ===');
-                    var iter = iterate(ast);
-                    for (var cur = iter.next(); !cur.done; cur = iter.next());
+
+                    simpleWalk(ast, function(node, depth) {
+                        var indent = '';
+                        for (var i = 0; i < depth; i++) {
+                            indent += '--';
+                        }
+                        logAst(indent + node.type);
+                    });
                 }
 
                 if (++iteration > iterationLimit) {
