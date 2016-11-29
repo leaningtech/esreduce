@@ -100,13 +100,13 @@
         // Choice
 
         IfStatement: function*(node) {
+            yield null;
             if (node.consequent) {
                 yield node.consequent;
             }
             if (node.alternate) {
                 yield node.alternate;
             }
-            yield null;
         },
 
         SwitchStatement: function*(node) {
@@ -131,23 +131,23 @@
         // Loops
 
         WhileStatement: function*(node) {
-            yield node.body;
             yield null;
+            yield node.body;
         },
 
         DoWhileStatement: function*(node) {
-            yield node.body;
             yield null;
+            yield node.body;
         },
 
         ForStatement: function*(node) {
-            yield node.body;
             yield null;
+            yield node.body;
         },
 
         ForInStatement: function*(node) {
-            yield node.body;
             yield null;
+            yield node.body;
         },
 
         // Declarations
@@ -262,6 +262,10 @@
             else {
                 log('mutation was successful!');
                 changed = true;
+
+                // After a successful mutation, there is no reason to try the
+                // other less important mutations.
+                break;
             }
         }
 
