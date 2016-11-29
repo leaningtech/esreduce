@@ -1,6 +1,7 @@
-# Remove the following comment to enable log messages for AST traversal, or AST
-# simplification.
-#export DEBUG=traversal,simplify,esreduce
+# Remove the following comment to enable log messages for AST traversal,
+# AST simplification, AST printing or AST mutation. Use 'esreduce' to log
+# messages about when a successful mutation has happened.
+#export DEBUG=traversal,simplify,ast,mutate,esreduce
 
 .PHONY: build test test-basic test-traversal test-simplify
 
