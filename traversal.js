@@ -5,8 +5,8 @@
     var estraverse = require('estraverse');
     var VisitorKeys = estraverse.VisitorKeys;
 
-    var debug = require('debug')
-    var log = debug('traversal')
+    var debug = require('debug');
+    var log = debug('traversal');
 
     function* iterate(root) {
         var stack = [{

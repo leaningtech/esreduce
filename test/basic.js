@@ -47,27 +47,27 @@ describe('basic', function () {
     });
 
     it('can remove all code', () => {
-        var source = 'var a=null;var b=[null];var c={d:b,o:0};'
+        var source = 'var a=null;var b=[null];var c={d:b,o:0};';
         var expected = '';
         var actual = esreduce.run(source, () => true);
         expect(actual).to.be.equal(expected);
     });
 
     it('can remove unused object properties', () => {
-        var source = 'var a = {b: 2, c: 3, d: 4}; a.b'
+        var source = 'var a = {b: 2, c: 3, d: 4}; a.b';
         var expected = 'var a = {\n\tb: 2\n};\na.b';
         var actual = esreduce.run(source, (source, ast) => {
-            try { return eval(source) == 2; }
+            try { return eval(source) === 2; }
             catch(e) { return false; }
         });
         expect(actual).to.be.equal(expected);
     });
 
     it('can remove if statement and keep the alternate', () => {
-        var source = 'if (0) var a = 1; else var a = 2; a'
+        var source = 'if (0) var a = 1; else var a = 2; a';
         var expected = 'var a = 2;\na';
         var actual = esreduce.run(source, (source, ast) => {
-            try { return eval(source) == 2; }
+            try { return eval(source) === 2; }
             catch(e) { return false; }
         });
         expect(actual).to.be.equal(expected);

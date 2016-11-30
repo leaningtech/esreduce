@@ -9,8 +9,8 @@
     var estraverse = require('estraverse');
     var Syntax = estraverse.Syntax;
 
-    var log = require('debug')('esreduce')
-    var logAst = require('debug')('ast')
+    var log = require('debug')('esreduce');
+    var logAst = require('debug')('ast');
 
     var traversal = require('./traversal.js');
     var simpleWalk = traversal.simpleWalk;
@@ -23,7 +23,7 @@
 
     function run(source, interesting) {
         // Verify that the original source code is interesting.
-        if (!interesting(source, ast))
+        if (!interesting(source, null))
             return;
 
         // Convert original JS source code to an AST.

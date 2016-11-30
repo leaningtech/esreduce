@@ -36,6 +36,7 @@
     "gulp-mocha": "^3.0.1",
     "rollup": "^0.36.4",
     "rollup-plugin-buble": "^0.14.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "run-sequence": "^1.2.2"
   }
 }

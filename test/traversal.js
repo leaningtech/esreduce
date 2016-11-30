@@ -7,6 +7,8 @@ var esreduce = require('./loader.js'),
 var acorn = require('acorn');
 var traversal = esreduce.traversal;
 
+var Syntax = require('estraverse').Syntax;
+
 describe('traversal', function () {
     it('visits nodes in breadth first, backwards order', function() {
         var source = 'var a=1; while(0) { var b=2 } var c=3; if (0) var d=4';
@@ -17,7 +19,7 @@ describe('traversal', function () {
 
         var iter = traversal.iterate(ast);
         for (var cur = iter.next(); !cur.done; cur = iter.next()) {
-            if (cur.value.node.type === 'Identifier') {
+            if (cur.value.node.type === Syntax.Identifier) {
                 actual.push(cur.value.node.name);
             }
         }
@@ -38,16 +40,16 @@ describe('traversal', function () {
 
         for (var cur = iter.next(); !cur.done; cur = iter.next()) {
             var node = cur.value.node;
-            if (node.type === 'Identifier') {
+            if (node.type === Syntax.Identifier) {
                 actual.push(node.name);
             }
 
             // Remove while statement and if statement with their children
-            if (node.type == 'WhileStatement') {
-                expect(ast.body[1].type).to.be.equal('WhileStatement');
+            if (node.type === Syntax.WhileStatement) {
+                expect(ast.body[1].type).to.be.equal(Syntax.WhileStatement);
                 ast.body[1] = null;
-            } else if (node.type == 'IfStatement') {
-                expect(ast.body[3].type).to.be.equal('IfStatement');
+            } else if (node.type === Syntax.IfStatement) {
+                expect(ast.body[3].type).to.be.equal(Syntax.IfStatement);
                 ast.body[3] = null;
             }
         }

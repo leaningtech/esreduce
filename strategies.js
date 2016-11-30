@@ -14,55 +14,21 @@
     var iterate = traversal.iterate;
     var simpleWalk = traversal.simpleWalk;
 
-    // Remove BlockStatements by replacing the node with an empty
-    // BlockStatement.
-    function removeBlocks(ast, interesting) {
-        var changed = false;
-
-        simpleWalk(ast, function(node, depth, container, key) {
-            // Do not replace empty block statements with a new empty block
-            // statement. That will cause a reduction loop.
-            if (node.type != Syntax.BlockStatement || !node.body.length) {
-                return;
-            }
-
-            var empty = createEmptyBlockStatement();
-            var replacement = replace(container, key, empty);
-
-            var tmp = codegen.generate(ast);
-
-            if (tmp === null || !interesting(tmp, ast)) {
-                replace(container, key, replacement);
-                return false;
-            } else {
-                log('removed:', node.type);
-                changed = true;
-                return true;
-            }
-        });
-
-        return changed;
-    }
-
-    // Remove function calls and callees by replacing them with 'null'.
-    function removeFunctions(ast, interesting) {
-        var changed = false;
-        return changed;
-    }
-
-    // Traverse the AST and try each mutation.
-    function mutate(ast, interesting) {
-        var changed = false;
-
-        var iter = iterate(ast);
-        for (var cur = iter.next(); !cur.done; cur = iter.next()) {
-            changed |= tryMutation(ast, interesting, cur.value);
-        }
-
-        return changed;
-    }
-
     // --- List of possible mutations -----------------------------------------
+
+    function createEmptyBlockStatement() {
+        return {
+            type: Syntax.BlockStatement,
+            body: [],
+        };
+    }
+
+    function createEmptyArrayExpression() {
+        return {
+            type: Syntax.ArrayExpression,
+            elements: [],
+        };
+    }
 
     // TODO remove the generators
     var mutator = {
@@ -243,20 +209,6 @@
 
     // --- Utility functions --------------------------------------------------
 
-    function createEmptyBlockStatement() {
-        return {
-            type: "BlockStatement",
-            body: [],
-        };
-    }
-
-    function createEmptyArrayExpression() {
-        return {
-            type: "ArrayExpression",
-            elements: [],
-        };
-    }
-
     function replace(container, key, value) {
         var replaced = container[key];
         container[key] = value;
@@ -295,6 +247,57 @@
 
         return changed;
     }
+
+    // --- Reduction strategies -----------------------------------------------
+
+    // Remove BlockStatements by replacing the node with an empty
+    // BlockStatement.
+    function removeBlocks(ast, interesting) {
+        var changed = false;
+
+        simpleWalk(ast, function(node, depth, container, key) {
+            // Do not replace empty block statements with a new empty block
+            // statement. That will cause a reduction loop.
+            if (node.type !== Syntax.BlockStatement || !node.body.length) {
+                return;
+            }
+
+            var empty = createEmptyBlockStatement();
+            var replacement = replace(container, key, empty);
+
+            var tmp = codegen.generate(ast);
+
+            if (tmp === null || !interesting(tmp, ast)) {
+                replace(container, key, replacement);
+                return false;
+            } else {
+                log('removed:', node.type);
+                changed = true;
+                return true;
+            }
+        });
+
+        return changed;
+    }
+
+    // Remove function calls and callees by replacing them with 'null'.
+    function removeFunctions(ast, interesting) {
+        var changed = false;
+        return changed;
+    }
+
+    // Traverse the AST and try each mutation.
+    function mutate(ast, interesting) {
+        var changed = false;
+
+        var iter = iterate(ast);
+        for (var cur = iter.next(); !cur.done; cur = iter.next()) {
+            changed |= tryMutation(ast, interesting, cur.value);
+        }
+
+        return changed;
+    }
+
 
     // --- Module exports -----------------------------------------------------
 

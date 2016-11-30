@@ -8,15 +8,19 @@ var runSequence = require('run-sequence');
 var TEST = [ 'test/*.js' ];
 
 var LINT = [
-    'gulpfile.js',
-    'esreduce.js'
+    '*.js',
+    'configs/*.js',
+    'test/*.js',
 ];
 
 var ESLINT_OPTION = {
     'rules': {
-        'quotes': 0,
-        'eqeqeq': 0,
-        'no-use-before-define': 0,
+        'indent': ['error', 4],
+        'linebreak-style': ['error', 'unix'],
+        'quotes': ['error', 'single'],
+        'semi': ['error', 'always'],
+        'eqeqeq': 2,
+        'no-use-before-define': 2,
         'dot-notation': 0,
         'no-shadow': 0,
         'no-unused-vars': [

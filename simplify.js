@@ -5,7 +5,7 @@
     var estraverse = require('estraverse');
     var Syntax = estraverse.Syntax;
 
-    var log = require('debug')('simplify')
+    var log = require('debug')('simplify');
 
     function removeNullNodes(node, children) {
         for (var c = 0; c < children.length; c++) {
@@ -39,7 +39,7 @@
     function mergeBlockStatementChildrenIntoParent(node, children) {
         for (var c = 0; c < children.length; c++) {
             var child = children[c];
-            if (child.type == Syntax.BlockStatement) {
+            if (child.type === Syntax.BlockStatement) {
                 mergeChildrenIntoParentsChildren(node, children, child, child.body, c);
             }
         }
@@ -50,8 +50,8 @@
 
         estraverse.traverse(ast, {
             enter: function (node) {
-                if (node.type == Syntax.Program ||
-                    node.type == Syntax.BlockStatement)
+                if (node.type === Syntax.Program ||
+                    node.type === Syntax.BlockStatement)
                 {
                     removeNullNodes(node, node.body);
                     mergeBlockStatementChildrenIntoParent(node, node.body);
