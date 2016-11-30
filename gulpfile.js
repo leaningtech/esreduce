@@ -16,6 +16,7 @@ var LINT = [
 var ESLINT_OPTION = {
     'rules': {
         'max-len': ['error', 80],
+        'max-depth': ['error', 5],
         'indent': ['error', 4],
         'linebreak-style': ['error', 'unix'],
         'quotes': ['error', 'single'],
