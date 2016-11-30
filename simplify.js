@@ -20,7 +20,8 @@
         }
     }
 
-    function mergeChildrenIntoParentsChildren(parent, parentProps, child, childProps, pos) {
+    function mergeChildrenIntoParentsChildren(parent, parentProps, child,
+                                              childProps, pos) {
         removeNullNodes(child, childProps);
 
         if (log.enabled) {
@@ -40,7 +41,8 @@
         for (var c = 0; c < children.length; c++) {
             var child = children[c];
             if (child.type === Syntax.BlockStatement) {
-                mergeChildrenIntoParentsChildren(node, children, child, child.body, c);
+                mergeChildrenIntoParentsChildren(node, children, child,
+                                                 child.body, c);
             }
         }
     }

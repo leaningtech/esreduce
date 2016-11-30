@@ -21,6 +21,20 @@
 
     var codegen = require('./codegen.js');
 
+    function logStatus(ast) {
+        if (logAst.enabled) {
+            logAst('=== reduced AST to: ===');
+
+            simpleWalk(ast, function(node, depth) {
+                var indent = '';
+                for (var i = 0; i < depth; i++) {
+                    indent += '--';
+                }
+                logAst(indent + node.type);
+            });
+        }
+    }
+
     function run(source, interesting) {
         // Verify that the original source code is interesting.
         if (!interesting(source, null))
@@ -47,21 +61,11 @@
             changed |= simplify(ast);
 
             if (changed) {
-                if (logAst.enabled) {
-                    logAst('=== reduced AST to: ===');
-
-                    simpleWalk(ast, function(node, depth) {
-                        var indent = '';
-                        for (var i = 0; i < depth; i++) {
-                            indent += '--';
-                        }
-                        logAst(indent + node.type);
-                    });
-                }
+                logStatus(ast);
 
                 if (++iteration > iterationLimit) {
-                    var msg = 'iteration limit (' + iterationLimit + ') is reached';
-                    throw new Error(msg);
+                    throw new Error('iteration limit (' + iterationLimit +
+                                    ') is reached');
                 } else if (log.enabled) {
                     log('=== start another iteration ===');
                 }
