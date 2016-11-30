@@ -10,9 +10,8 @@
 
     function* iterate(root) {
         var stack = [{
-            parent: null,
+            container: null,
             key: null,
-            i: 0,
             node: root,
             depth: 0,
         }];
@@ -20,7 +19,7 @@
         var stackItem = 0;
         var current;
         while (current = stack[stackItem++]) {
-            var parent = current.parent;
+            var container = current.container;
             var node = current.node;
             var depth = current.depth;
 
@@ -37,31 +36,34 @@
             // Check if the node is not removed before traversing its children.
             // TODO this test doesn't check if the parent of a node is removed.
             // It will only check if the direct parent includes the child node.
-            if (parent) {
-                var value = parent[current.key];
+            if (container) {
+                var value = container[current.key];
                 if (!value)
-                    continue;
-
-                var children = Array.isArray(value) ? value : [value];
-                if (!children[current.i])
                     continue;
             }
 
-            // Traverse the node's children.
-            for (var key of VisitorKeys[node.type]) {
-                var value = node[key];
-                var children = Array.isArray(value) ? value : [value];
-                // forward: |for (var i = 0; i < children.length; i++) {|
-                // Traverse the children backwards.
-                for (var i = children.length - 1; i >= 0; i--) {
-                    if (!children[i])
-                        continue;
+            // Traverse the node's properties.
+            for (var nodeKey of VisitorKeys[node.type]) {
+                var value = node[nodeKey];
 
+                if (Array.isArray(value)) {
+                    // Traverse the node properties backwards.
+                    for (var i = value.length - 1; i >= 0; i--) {
+                        if (!value[i])
+                            continue;
+
+                        stack.push({
+                            container: value,
+                            key: i,
+                            node: value[i],
+                            depth: depth + 1,
+                        });
+                    }
+                } else if (value) {
                     stack.push({
-                        parent: node,
-                        key: key,
-                        i: i,
-                        node: children[i],
+                        container: node,
+                        key: nodeKey,
+                        node: value,
                         depth: depth + 1,
                     });
                 }
@@ -69,23 +71,30 @@
         }
     }
 
-    function simpleWalk(node, callback, depth) {
+    function simpleWalk(node, callback, depth, container, key) {
         if (node === null)
             return;
 
         if (depth === undefined)
             depth = 0;
 
-        callback(node, depth);
+        var removed = callback(node, depth, container, key);
 
-        for (var key of VisitorKeys[node.type]) {
-            var value = node[key];
-            var children = Array.isArray(value) ? value : [value];
-            for (var i = 0; i < children.length; i++) {
-                if (!children[i])
-                    continue;
+        if (removed)
+            return;
 
-                simpleWalk(children[i], callback, depth + 1);
+        for (var nodeKey of VisitorKeys[node.type]) {
+            var value = node[nodeKey];
+
+            if (Array.isArray(value)) {
+                for (var i = 0; i < value.length; i++) {
+                    if (!value[i])
+                        continue;
+
+                    simpleWalk(value[i], callback, depth + 1, value, i);
+                }
+            } else if (value) {
+                simpleWalk(value, callback, depth + 1, node, nodeKey);
             }
         }
     }

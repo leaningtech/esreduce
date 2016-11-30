@@ -5,6 +5,7 @@ var esreduce = require('./loader.js'),
     expect = chai.expect;
 
 var acorn = require('acorn');
+var traversal = esreduce.traversal;
 
 describe('traversal', function () {
     it('visits nodes in breadth first, backwards order', function() {
@@ -14,7 +15,7 @@ describe('traversal', function () {
         var actual = [];
         var expected = ['c', 'a', 'd', 'b'];
 
-        var iter = esreduce.iterate(ast);
+        var iter = traversal.iterate(ast);
         for (var cur = iter.next(); !cur.done; cur = iter.next()) {
             if (cur.value.node.type === 'Identifier') {
                 actual.push(cur.value.node.name);
@@ -30,7 +31,7 @@ describe('traversal', function () {
         var source = 'var a=1; while(0) { var b=2 } var c=3; if (0) var d=4';
         var ast = acorn.parse(source);
 
-        var iter = esreduce.iterate(ast);
+        var iter = traversal.iterate(ast);
 
         var actual = [];
         var expected = ['c', 'a'];
@@ -53,4 +54,6 @@ describe('traversal', function () {
 
         expect(actual).to.be.deep.equal(expected);
     });
+
+    // TODO add a test to verify that the simpleWalk traversal works
 });
