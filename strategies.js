@@ -238,7 +238,6 @@
             } else {
                 changed = true;
 
-                log('successful mutation!');
                 // After a successful mutation, there is no reason to try the
                 // other less important mutations on the same AST node.
                 break;
@@ -262,6 +261,8 @@
                 return;
             }
 
+            log('replacing BlockStatement with an empty BlockStatement');
+
             var empty = createEmptyBlockStatement();
             var replacement = replace(container, key, empty);
 
@@ -271,7 +272,6 @@
                 replace(container, key, replacement);
                 return false;
             } else {
-                log('removed:', node.type);
                 changed = true;
                 return true;
             }

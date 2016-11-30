@@ -47,9 +47,7 @@
         if (B.status !== 0)
             return false;
 
-        console.log('A took:', A.duration, '(ms) B took:', B.duration, '(ms)',
-                    'code length:', code.length,
-                    'code lines:', code.split('\n').length);
+        console.log('A took:', A.duration, '(ms) B took:', B.duration, '(ms)');
 
         if (A.duration - B.duration < difference)
             return false;

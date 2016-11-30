@@ -35,8 +35,34 @@
         }
     }
 
-    function run(source, interesting) {
-        // Verify that the original source code is interesting.
+    function instrumentStats(interesting, stats) {
+        if (stats)
+            assert(stats.tests);
+
+        return function(code, ast) {
+            if (stats)
+                stats.tests.total++;
+
+            var result = interesting(code, ast);
+
+            if (result) {
+                if (stats)
+                    stats.tests.interesting++;
+                log('found an interesting test case!',
+                    'bytes:', code.length, 'lines:', code.split('\n').length);
+            } else {
+                if (stats)
+                    stats.tests.uninteresting++;
+            }
+
+            return result;
+        };
+    }
+
+    function run(source, interesting, options, stats) {
+        interesting = instrumentStats(interesting, stats);
+
+        log('verifying that the source code is interesting');
         if (!interesting(source, null))
             return;
 
@@ -74,6 +100,11 @@
 
         // Generate the final JS code for the AST.
         var result = codegen.generate(ast);
+
+        if (stats) {
+            stats.finalCode.lines = result.split('\n').length;
+            stats.finalCode.bytes = result.length;
+        }
 
         return result;
     }

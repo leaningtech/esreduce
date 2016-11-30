@@ -3,7 +3,25 @@ var fs = require('fs');
 var esreduce = require('../esreduce');
 
 function run(source, interesting) {
-    var result = esreduce.run(source, interesting);
+    var options = {};
+
+    var stats = {
+        initialCode: {
+            lines: source.split('\n').length,
+            bytes: source.length,
+        },
+        finalCode: {
+            lines: 0,
+            bytes: 0,
+        },
+        tests: {
+            total: 0,
+            interesting: 0,
+            uninteresting: 0,
+        },
+    };
+
+    var result = esreduce.run(source, interesting, options, stats);
 
     if (result === undefined) {
         console.error('Initial source code is not considered interesting!');
@@ -14,10 +32,14 @@ function run(source, interesting) {
     console.log('ESReduce final JS code written to:', outfile);
     fs.writeFileSync(outfile, result + '\n');
 
-    var stats = esreduce.lastStats;
     console.log('ESReduce statistics:');
-    console.log(`\t- iterations: ${stats.iterations}`);
-    console.log(`\t- interesting tests: ${stats.interestingTests}`);
+    console.log(`\t- initial lines: ${stats.initialCode.lines}`);
+    console.log(`\t- initial bytes: ${stats.initialCode.bytes}`);
+    console.log(`\t- final lines: ${stats.finalCode.lines}`);
+    console.log(`\t- final bytes: ${stats.finalCode.bytes}`);
+    console.log(`\t- total tests: ${stats.tests.total}`);
+    console.log(`\t- interesting: ${stats.tests.interesting}`);
+    console.log(`\t- uninteresting: ${stats.tests.uninteresting}`);
 }
 
 function help(status) {
